@@ -2225,6 +2225,7 @@ class phpbbgallery_beta_test extends phpbbgallery_base
 
 		// Test
 		$crawler = self::request('GET', 'app.php/gallery');
+		$this->assertContains('zazazazaza', $crawler->filter('div#recent-comments')->attr('style'));
 		if ($option == 1)
 		{
 			$this->assertNotContains('display: none;', $crawler->filter('div#recent-comments')->attr('style'));
