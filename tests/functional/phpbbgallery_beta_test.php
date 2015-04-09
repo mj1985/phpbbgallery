@@ -2180,7 +2180,7 @@ class phpbbgallery_beta_test extends phpbbgallery_base
 		$crawler = self::request('GET', 'adm/index.php?i=-phpbbgallery-core-acp-config_module&mode=main&sid=' . $this->sid);
 		$form = $crawler->selectButton('submit')->form();
 		$form->setValues(array(
-			'config[rrc_gindex_comments]'	=> $option,
+			'rrc_gindex_mode'	=> $options,
 		));
 		$crawler = self::submit($form);
 		// Should be updated
@@ -2203,9 +2203,9 @@ class phpbbgallery_beta_test extends phpbbgallery_base
 		$this->logout();
 	}
 	/**
-	* @ data Provider yes_no_data
+	* @dataProvider yes_no_data
 	*/
-	/*public function test_rrc_gindex_comments($option)
+	public function test_rrc_gindex_comments($option)
 	{
 		$this->login();
 		$this->admin_login();
@@ -2364,97 +2364,6 @@ class phpbbgallery_beta_test extends phpbbgallery_base
 			$crawler = self::request('GET', 'app.php/gallery/search/random');
 			$this->assertNotContains('Image in Personal album', $crawler->text());
 		}
-		$this->logout();
-		$this->logout();
-	}
-	/**
-	* @dataProvider yes_no_data
-	*/
-	public function test_rrc_gindex_comments($option)
-	{
-		$this->login();
-		$this->admin_login();
-		$this->add_lang_ext('phpbbgallery/core', 'gallery');
-		$this->add_lang_ext('phpbbgallery/core', 'gallery_acp');
-		$this->add_lang('common');
-
-		// Change option
-		$crawler = self::request('GET', 'adm/index.php?i=-phpbbgallery-core-acp-config_module&mode=main&sid=' . $this->sid);
-		$form = $crawler->selectButton('submit')->form();
-		$form->setValues(array(
-			'rrc_gindex_mode'	=> $options,
-		));
-		$crawler = self::submit($form);
-		// Should be updated
-		$this->assertContainsLang('GALLERY_CONFIG_UPDATED', $crawler->text());
-
-		// Test
-		$crawler = self::request('GET', 'app.php/gallery');
-		if ($option == 1)
-		{
-			$this->assertContains('display: none', $crawler->filter('div#recent-comments')->attr('style'));
-		}
-		else
-		{
-			$this->assertNotContains('display: none', $crawler->filter('div#recent-comments')->attr('style'));
-		}
-	}*/
-	/**
-	* @dataProvider image_polaroid_info_data
-	*/
-	public function test_rrc_gindex_display($options, $tests)
-	{
-		$this->login();
-		$this->admin_login();
-		$this->add_lang_ext('phpbbgallery/core', 'gallery');
-		$this->add_lang_ext('phpbbgallery/core', 'gallery_acp');
-		$this->add_lang('common');
-
-		// Change option
-		$crawler = self::request('GET', 'adm/index.php?i=-phpbbgallery-core-acp-config_module&mode=main&sid=' . $this->sid);
-		$form = $crawler->selectButton('submit')->form();
-		$form->setValues(array(
-			'rrc_gindex_display'	=> $options,
-		));
-		$crawler = self::submit($form);
-		// Should be updated
-		$this->assertContainsLang('GALLERY_CONFIG_UPDATED', $crawler->text());
-
-		// Test
-		$crawler = self::request('GET', 'app.php/gallery');
-		
-		$object_recent = $crawler->filter('div.polaroid')->eq(2);
-		$object_random = $crawler->filter('div.polaroid')->eq(6);
-		foreach ($tests as $test => $state)
-		{
-			if ($state)
-			{
-				if ($test == 'Valid')
-				{
-					$this->assertEquals(1, $object_recent->filter('p')->filter('a')->count());
-					$this->assertEquals(1, $object_random->filter('p')->filter('a')->count());
-				}
-				else
-				{
-					$this->assertContains($test, $object_recent->text());
-					$this->assertContains($test, $object_random->text());
-				}
-			}
-			else
-			{
-				if ($test == 'Valid')
-				{
-					$this->assertEquals(0, $object_recent->filter('p')->filter('a')->count());
-					$this->assertEquals(0, $object_random->filter('p')->filter('a')->count());
-				}
-				else
-				{
-					$this->assertNotContains($test, $object_recent->text());
-					$this->assertNotContains($test, $object_random->text());
-				}
-			}
-		}
-		
 		$this->logout();
 		$this->logout();
 	}
